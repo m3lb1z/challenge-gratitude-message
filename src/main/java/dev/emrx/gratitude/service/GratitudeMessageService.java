@@ -2,6 +2,8 @@ package dev.emrx.gratitude.service;
 
 import dev.emrx.gratitude.model.GratitudeMessage;
 import dev.emrx.gratitude.repository.GratitudeMessageRepository;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ public class GratitudeMessageService {
     @Autowired
     private GratitudeMessageRepository gratitudeMessageRepository;
 
+    @Transactional
     public GratitudeMessage createGratitudeMessage(GratitudeMessage gratitudeMessage) {
         return gratitudeMessageRepository.save(gratitudeMessage);
     }
@@ -25,10 +28,12 @@ public class GratitudeMessageService {
         return gratitudeMessageRepository.findAllByOrderByCreatedAtDesc();
     }
 
+    @Transactional
     public void deleteGratitudeMessage(Long id) {
         gratitudeMessageRepository.deleteById(id);
     }
 
+    @Transactional
     public GratitudeMessage likeGratitudeMessage(Long id) {
         Optional<GratitudeMessage> optionalMessage = gratitudeMessageRepository.findById(id);
         if (optionalMessage.isPresent()) {
