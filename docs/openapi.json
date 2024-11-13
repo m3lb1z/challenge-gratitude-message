@@ -1,0 +1,225 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Gratitude Message API",
+    "description": "API RESTful en Spring para enviar, almacenar y listar mensajes de agradecimientos. La API permitir a los usuarios compartan mensajes de agradecimiento.\n",
+    "contact": {
+      "name": "Equipo de desarrollo",
+      "email": "support@gratitude.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://gratitude.com/api/licencia"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/gratitude": {
+      "get": {
+        "tags": ["gratitude-message-controller"],
+        "summary": "Obtener todos los mensajes de agradecimiento",
+        "description": "Devuelve una lista de todos los mensajes de agradecimiento",
+        "operationId": "getAllGratitudeMessages",
+        "parameters": [
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Criterio de ordenación",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de mensajes de agradecimiento obtenida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GratitudeMessageDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["gratitude-message-controller"],
+        "summary": "Crear un mensaje de agradecimiento",
+        "description": "Crea un nuevo mensaje de agradecimiento",
+        "operationId": "createGratitudeMessage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGratitudeMessageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Mensaje de agradecimiento creado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GratitudeMessageDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GratitudeMessageDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gratitude/{id}/like": {
+      "post": {
+        "tags": ["gratitude-message-controller"],
+        "summary": "Dar me gusta a un mensaje de agradecimiento",
+        "description": "Incrementa el contador de me gusta de un mensaje de agradecimiento por su ID",
+        "operationId": "likeGratitudeMessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del mensaje de agradecimiento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mensaje de agradecimiento actualizado con un me gusta",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GratitudeMessageDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mensaje de agradecimiento no encontrado",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GratitudeMessageDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gratitude/{id}": {
+      "delete": {
+        "tags": ["gratitude-message-controller"],
+        "summary": "Eliminar un mensaje de agradecimiento",
+        "description": "Elimina un mensaje de agradecimiento por su ID",
+        "operationId": "deleteGratitudeMessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del mensaje de agradecimiento",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Mensaje de agradecimiento eliminado"
+          },
+          "404": {
+            "description": "Mensaje de agradecimiento no encontrado"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateGratitudeMessageRequest": {
+        "required": ["message", "senderName"],
+        "type": "object",
+        "properties": {
+          "message": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string",
+            "description": "El contenido del mensaje de gratitud",
+            "example": "Gracias por tu ayuda"
+          },
+          "senderName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "description": "El nombre del remitente del mensaje",
+            "example": "Juan Pérez"
+          }
+        },
+        "description": "Solicitud para crear un mensaje de agradecimiento"
+      },
+      "GratitudeMessageDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "El ID del mensaje",
+            "format": "int64",
+            "example": 1
+          },
+          "message": {
+            "type": "string",
+            "description": "El contenido del mensaje de gratitud",
+            "example": "Querida Alexandra, gracias por tus palabras de aliento durante los momentos difíciles. Significan mucho para mí."
+          },
+          "senderName": {
+            "type": "string",
+            "description": "El nombre del remitente del mensaje",
+            "example": "Sofía Rodríguez"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "La fecha y hora en que se creó el mensaje",
+            "format": "date-time"
+          },
+          "likes": {
+            "type": "integer",
+            "description": "El número de 'me gusta' que tiene el mensaje",
+            "format": "int32",
+            "example": 3
+          }
+        },
+        "description": "Objeto que representa un mensaje de gratitud"
+      }
+    }
+  }
+}
